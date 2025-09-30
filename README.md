@@ -16,7 +16,7 @@ O **StudyLog** é uma aplicação web desenvolvida em React com TypeScript para 
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **React** - Biblioteca principal
+- **React** - Biblioteca principal utilizada
 - **TypeScript** - Tipagem estática
 - **Tailwind CSS** - Estilização
 - **React Router DOM** - Roteamento
