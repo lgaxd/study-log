@@ -19,6 +19,18 @@ const AdicionarSessao = lazy(() =>
   }))
 );
 
+const SessaoDetails = lazy(() =>
+  import("./pages/sessao-details").then((module) => ({
+    default: module.SessaoDetails,
+  }))
+);
+
+const Layout = lazy(() =>
+  import("./components/layout").then((module) => ({
+    default: module.Layout,
+  }))
+);
+
 function App() {
   const [sessoes, setSessoes] = useState<StudySession[]>([]);
 
@@ -27,22 +39,8 @@ function App() {
   }, []);
 
   const removeSessao = useCallback((id: string) => {
-    setSessoes((prev) => {
-
-      const sessaoToDelete = prev.some((sessao) => sessao.id === id);
-
-      if (sessaoToDelete) {
-
-        const newSessoes = prev.filter((sessao) => sessao.id !== id);
-
-        return newSessoes;
-      }
-
-      return prev;
-    });
+    setSessoes((prev) => prev.filter((sessao) => sessao.id !== id));
   }, []);
-
-
 
   return (
     <BrowserRouter>
@@ -58,7 +56,7 @@ function App() {
               />
               <Route
                 path="/add"
-                element={<addSessao onAdd={addSessao} sessoes={sessoes} />}
+                element={<AdicionarSessao onAdd={addSessao} sessoes={sessoes} />}
               />
               <Route path="/sessao/:id" element={<SessaoDetails />} />
               <Route path="*" element={<NotFound />} />
