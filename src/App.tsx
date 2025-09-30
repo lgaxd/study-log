@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ErrorFallback } from "./components/error-fallback";
 import { ErrorBoundary } from "react-error-boundary";
 import { Loading } from "./components/loading";
+import { NotFound } from "./pages/not-found";
 
 const Home = lazy(() =>
   import("./pages/home").then((module) => ({
@@ -18,6 +19,7 @@ function App() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route index element={<Home />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </ErrorBoundary>
