@@ -1,21 +1,20 @@
 import { useState } from "react";
 import type { StudySession } from "../types/StudySession";
 
-interface AddSessaoProps {
-  sessoes: StudySession[];
-  onAdd: (sessoes: StudySession) => void;
+interface SessaoFormProps {
+  onAdd: (sessao: StudySession) => void;
 }
 
-export function SessaoForm({ onAdd }: AddSessaoProps) {
-  const [subject, setTitle] = useState("");
-  const [minutes, setDurationMinutes] = useState(0);
+export function SessaoForm({ onAdd }: SessaoFormProps) {
+  const [subject, setSubject] = useState("");
+  const [minutes, setMinutes] = useState(0);
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
 
   function handleSubmit(event: React.FormEvent): void {
     event.preventDefault();
 
-    const workout: StudySession = {
+    const sessao: StudySession = {
       id: crypto.randomUUID(),
       subject,
       date,
@@ -23,10 +22,10 @@ export function SessaoForm({ onAdd }: AddSessaoProps) {
       notes,
     };
 
-    onAdd(workout);
+    onAdd(sessao);
 
-    setTitle("");
-    setDurationMinutes(0);
+    setSubject("");
+    setMinutes(0);
     setDate("");
     setNotes("");
   }
@@ -36,47 +35,61 @@ export function SessaoForm({ onAdd }: AddSessaoProps) {
       onSubmit={handleSubmit}
       className="bg-white shadow rounded-lg p-4 flex flex-col gap-3 w-4/5 mb-5"
     >
-      <label htmlFor="workout-title">Matéria do estudo</label>
+      <label htmlFor="study-subject" className="font-medium text-gray-700">
+        Matéria do estudo
+      </label>
       <input
         type="text"
         id="study-subject"
-        placeholder="Título do estudo"
-        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Matéria estudada"
+        onChange={(e) => setSubject(e.target.value)}
         value={subject}
-        className="border rounded p-2"
+        className="border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required
       />
 
-      <label htmlFor="session-duration">Duração (min)</label>
+      <label htmlFor="session-duration" className="font-medium text-gray-700">
+        Duração (minutos)
+      </label>
       <input
         type="number"
         id="session-duration"
-        placeholder="Duração (min)"
-        onChange={(e) => setDurationMinutes(Number(e.target.value))}
+        placeholder="Duração em minutos"
+        onChange={(e) => setMinutes(Number(e.target.value))}
         value={minutes}
-        className="border rounded p-2"
+        min="1"
+        className="border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required
       />
 
-      <label htmlFor="session-date">Dia do estudo</label>
+      <label htmlFor="session-date" className="font-medium text-gray-700">
+        Data do estudo
+      </label>
       <input
         type="date"
         id="session-date"
-        placeholder="Dia de estudo"
         onChange={(e) => setDate(e.target.value)}
         value={date}
-        className="border rounded p-2"
+        className="border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required
       />
 
-      <label htmlFor="session-note">Anotações</label>
-      <input
-        type="text"
-        placeholder="Anotações"
+      <label htmlFor="session-note" className="font-medium text-gray-700">
+        Anotações
+      </label>
+      <textarea
+        placeholder="Anotações sobre a sessão"
         id="session-note"
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        className="border rounded p-2"
+        className="border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        rows={3}
       />
 
-      <button className="btn" type="submit">
+      <button
+        className="btn bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition-colors mt-2"
+        type="submit"
+      >
         Adicionar sessão de estudo
       </button>
     </form>

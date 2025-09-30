@@ -1,25 +1,39 @@
 import { useMemo } from "react";
 import type { StudySession } from "../types/StudySession";
-import { SessionResume } from "./sessao-resume";
+import { SessaoResume } from "./sessao-resume";
 
-interface SessionListProps {
-  sessionList: StudySession[];
-  removeSession: (id: string) => void;
+interface SessaoListProps {
+  sessoes: StudySession[];
+  removeSessao: (id: string) => void;
 }
 
-export function SessionList({ sessionList, removeSession }: SessionListProps) {
-  const sessionTotal = useMemo(() => {
-    return sessionList.length;
-  }, [sessionList]);
+export function SessaoList({ sessoes, removeSessao }: SessaoListProps) {
+  const totalSessoes = useMemo(() => {
+    return sessoes.length;
+  }, [sessoes]);
+
+  const totalMinutos = useMemo(() => {
+    return sessoes.reduce((total, sessao) => total + sessao.minutes, 0);
+  }, [sessoes]);
 
   return (
     <>
-      <h3>Total de treinos: {sessionTotal}</h3>
-      <h2 className="font-bold text-gray-600 text-xl mb-3">Lista de treinos</h2>
+      <h2 className="font-bold text-gray-600 text-xl mb-3">Lista de Sessões de Estudo</h2>
+      <h3 className="text-lg mb-4">
+        Total de sessões: {totalSessoes} | Tempo total: {Math.floor(totalMinutos / 60)}h {totalMinutos % 60}m
+      </h3>
 
-      {sessionList.map((value) => {
-        return <SessionResume removeSession={removeSession} session={value} />;
-      })}
+      {sessoes.length === 0 ? (
+        <p className="text-gray-500">Nenhuma sessão de estudo cadastrada.</p>
+      ) : (
+        sessoes.map((sessao) => (
+          <SessaoResume 
+            key={sessao.id} 
+            sessao={sessao} 
+            removeSessao={removeSessao} 
+          />
+        ))
+      )}
     </>
   );
 }

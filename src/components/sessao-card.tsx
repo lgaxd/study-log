@@ -1,4 +1,4 @@
-import type { StudySession } from "../types/StudySession"; 
+import type { StudySession } from "../types/StudySession";
 
 interface Props {
   sessao: StudySession;

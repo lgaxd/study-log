@@ -1,5 +1,5 @@
 import "./index.css";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ErrorFallback } from "./components/error-fallback";
 import { ErrorBoundary } from "react-error-boundary";
@@ -19,13 +19,48 @@ const AdicionarSessao = lazy(() =>
 );
 
 function App() {
+  const [sessoes, setSessoes] = useState<StudySession[]>([]);
+
+  const addSessao = useCallback((sessao: StudySession) => {
+    setSessoes((prev) => [...prev, sessao]);
+  }, []);
+
+  const removeSessao = useCallback((id: string) => {
+    setSessoes((prev) => {
+
+      const sessaoToDelete = prev.some((sessao) => sessao.id === id);
+
+      if (sessaoToDelete) {
+
+        const newSessoes = prev.filter((sessao) => sessao.id !== id);
+
+        return newSessoes;
+      }
+
+      return prev;
+    });
+  }, []);
+
+
+
   return (
     <BrowserRouter>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Suspense fallback={<Loading />}>
           <Routes>
-            <Route index element={<Home />} />
-            <Route path="/add" element={<AdicionarSessao />} />
+            <Route path="/" element={<Layout />}>
+              <Route
+                index
+                element={
+                  <Home removeSessao={removeSessao} sessoes={sessoes} />
+                }
+              />
+              <Route
+                path="/add"
+                element={<addSessao onAdd={addSessao} sessoes={sessoes} />}
+              />
+              <Route path="/sessao/:id" element={<SessaoDetails />} />
+            </Route>
           </Routes>
         </Suspense>
       </ErrorBoundary>
