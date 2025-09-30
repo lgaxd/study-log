@@ -1,35 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./index.css";
+import { lazy, Suspense, useCallback, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ErrorFallback } from "./components/error-fallback";
+import { ErrorBoundary } from "react-error-boundary";
+import { Loading } from "./components/loading";
+import type { StudySession } from "./types/StudySession";
+import { NotFound } from "./pages/not-found";
+
+const Home = lazy(() =>
+  import("./pages/home").then((module) => ({
+    default: module.Home,
+  }))
+);
+
+const AdicionarSessao = lazy(() =>
+  import("./pages/adicionar-sessao").then((module) => ({
+    default: module.AdicionarSessao,
+  }))
+);
+
+const SessaoDetails = lazy(() =>
+  import("./pages/sessao-details").then((module) => ({
+    default: module.SessaoDetails,
+  }))
+);
+
+const Layout = lazy(() =>
+  import("./components/layout").then((module) => ({
+    default: module.Layout,
+  }))
+);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [sessoes, setSessoes] = useState<StudySession[]>([]);
+
+  const addSessao = useCallback((sessao: StudySession) => {
+    setSessoes((prev) => [...prev, sessao]);
+  }, []);
+
+  const removeSessao = useCallback((id: string) => {
+    setSessoes((prev) => prev.filter((sessao) => sessao.id !== id));
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route
+                index
+                element={
+                  <Home removeSessao={removeSessao} sessoes={sessoes} />
+                }
+              />
+              <Route
+                path="/add"
+                element={<AdicionarSessao onAdd={addSessao} sessoes={sessoes} />}
+              />
+              <Route path="/sessao/:id" element={<SessaoDetails />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
