@@ -5,6 +5,7 @@ import { ErrorFallback } from "./components/error-fallback";
 import { ErrorBoundary } from "react-error-boundary";
 import { Loading } from "./components/loading";
 import type { StudySession } from "./types/StudySession";
+import { NotFound } from "./pages/not-found";
 
 const Home = lazy(() =>
   import("./pages/home").then((module) => ({
@@ -60,6 +61,7 @@ function App() {
                 element={<addSessao onAdd={addSessao} sessoes={sessoes} />}
               />
               <Route path="/sessao/:id" element={<SessaoDetails />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </Suspense>
